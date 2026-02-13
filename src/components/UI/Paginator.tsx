@@ -23,7 +23,8 @@ export const Paginator = ({
           <Box
             sx={{
               padding: "4px 8px",
-              border: p === page ? "1px solid black" : "1px solid transparent",
+              border:
+                p === page ? "1px solid #646cff" : "1px solid transparent",
               borderRadius: 4,
               cursor: "pointer",
             }}
