@@ -15,5 +15,5 @@ export default function SocketProvider({
     initSocket(dispatch);
   }, [dispatch]);
 
-  return <>{children}</>;
+  return { children };
 }

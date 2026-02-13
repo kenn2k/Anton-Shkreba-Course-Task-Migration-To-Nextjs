@@ -1,11 +1,7 @@
 import { OwnPosts } from "@/components/posts/OwnPosts";
 
 const StripePage = () => {
-  return (
-    <>
-      <OwnPosts />
-    </>
-  );
+  return <OwnPosts />;
 };
 
 export default StripePage;
