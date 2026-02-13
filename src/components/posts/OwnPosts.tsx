@@ -1,30 +1,46 @@
 "use client";
 
-import Grid from "@mui/material/Grid";
 import { useRequest } from "ahooks";
-import { Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { getMyExhibits } from "@/api/actions/exhibitActions";
 import { Exhibit } from "@/types";
 import { OwnPostsCard } from "./OwnPostsCard";
+import { CommentModal } from "../comments/CommentModal";
 
 export const OwnPosts = () => {
   const { data: myExhibits } = useRequest(getMyExhibits);
+
   if (!myExhibits?.data?.length) {
     return (
-      <Typography variant="body2" sx={{ color: "text.secondary", py: 1 }}>
-        No personal posts found
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          py: 4,
+        }}
+      >
+        <Typography variant="body2" sx={{ color: "text.secondary" }}>
+          No personal posts found
+        </Typography>
+      </Box>
     );
   }
+
   return (
-    <>
-      <Grid container spacing={3}>
-        {myExhibits?.data?.map((post: Exhibit) => (
-          <Grid key={post.id}>
-            <OwnPostsCard {...post} />
-          </Grid>
-        ))}
-      </Grid>
-    </>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 4,
+        py: 4,
+      }}
+    >
+      {myExhibits.data.map((post: Exhibit) => (
+        <OwnPostsCard key={post.id} {...post} />
+      ))}
+
+      <CommentModal />
+    </Box>
   );
 };

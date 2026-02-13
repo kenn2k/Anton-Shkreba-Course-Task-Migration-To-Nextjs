@@ -1,32 +1,24 @@
 import { Exhibit } from "@/types";
-import CommentIcon from "@mui/icons-material/Comment";
-import DeleteIcon from "@mui/icons-material/Delete";
-import {
-  Box,
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  IconButton,
-  Typography,
-} from "@mui/material";
 
-export const OwnPostsCard = ({ description }: Exhibit) => {
+import { Card, CardContent, CardMedia, Typography } from "@mui/material";
+import { OwnPostsCardActions } from "./OwnPostsCardActions";
+
+export const OwnPostsCard = ({ description, id }: Exhibit) => {
   return (
-    <Card sx={{ width: "100%" }}>
-      <CardMedia component="img" height="194" image="/next.svg" />
+    <Card sx={{ width: "100%", maxWidth: 500 }}>
+      <CardMedia
+        component="img"
+        height="194"
+        image="/next.svg"
+        alt="Exhibit image"
+      />
       <CardContent>
-        <Typography variant="body2">{description}</Typography>
+        <Typography variant="body2" sx={{ color: "text.secondary" }}>
+          {description}
+        </Typography>
       </CardContent>
-      <CardActions>
-        <IconButton>
-          <CommentIcon />
-        </IconButton>
-        <Box sx={{ flexGrow: 1 }} />
-        <IconButton color="error">
-          <DeleteIcon />
-        </IconButton>
-      </CardActions>
+
+      <OwnPostsCardActions exhibitId={id} />
     </Card>
   );
 };
