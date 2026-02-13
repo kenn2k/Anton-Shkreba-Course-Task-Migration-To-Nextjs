@@ -1,15 +1,16 @@
-"use client";
-
-import { useRequest } from "ahooks";
 import { Box, Typography } from "@mui/material";
-import { getMyExhibits } from "@/api/actions/exhibitActions";
-import { Exhibit } from "@/types";
+
+import { Exhibit, ExhibitsResponse } from "@/types";
 import { OwnPostsCard } from "./OwnPostsCard";
 import { CommentModal } from "../comments/CommentModal";
+import { Paginator } from "../UI/Paginator";
 
-export const OwnPosts = () => {
-  const { data: myExhibits } = useRequest(getMyExhibits);
+interface OwnPostsProps {
+  myExhibits: ExhibitsResponse;
+  page?: number;
+}
 
+export const OwnPosts = ({ myExhibits, page = 1 }: OwnPostsProps) => {
   if (!myExhibits?.data?.length) {
     return (
       <Box
@@ -36,6 +37,11 @@ export const OwnPosts = () => {
         py: 4,
       }}
     >
+      <Paginator
+        navigationPath="/home"
+        page={+page}
+        lastPage={myExhibits.lastPage}
+      />
       {myExhibits.data.map((post: Exhibit) => (
         <OwnPostsCard key={post.id} {...post} />
       ))}

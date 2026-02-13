@@ -14,6 +14,12 @@ export interface Exhibit {
     username: string;
   };
 }
+
+export interface ExhibitsResponse {
+  data: Exhibit[];
+  lastPage: number;
+}
+
 export interface FormPostValues {
   image: File | null;
   description: string;
