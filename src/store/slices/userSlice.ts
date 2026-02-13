@@ -1,4 +1,9 @@
-import { loginUser, registerUser } from "@/api/actions/userActions";
+import {
+  getCurrentUser,
+  loginUser,
+  logoutUser,
+  registerUser,
+} from "@/api/actions/userActions";
 import { createSlice } from "@reduxjs/toolkit";
 
 interface User {
@@ -13,10 +18,8 @@ interface UsersState {
   error: string | null;
 }
 
-const token = localStorage.getItem("access_token");
-
 const initialState: UsersState = {
-  isAuthenticated: !!token,
+  isAuthenticated: false,
   user: null,
   loading: "idle",
   error: null,
@@ -26,12 +29,8 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    logout(state) {
-      state.isAuthenticated = false;
-      state.loading = "idle";
+    clearError: (state) => {
       state.error = null;
-
-      localStorage.removeItem("access_token");
     },
   },
   extraReducers: (builder) => {
@@ -63,8 +62,25 @@ const userSlice = createSlice({
         state.isAuthenticated = false;
         state.error =
           (action.payload as string) ?? action.error.message ?? "Log in failed";
+      })
+      .addCase(getCurrentUser.pending, (state) => {
+        state.loading = "pending";
+      })
+      .addCase(getCurrentUser.fulfilled, (state, action) => {
+        state.isAuthenticated = true;
+        state.user = action.payload;
+        state.loading = "succeeded";
+      })
+      .addCase(getCurrentUser.rejected, (state) => {
+        state.isAuthenticated = false;
+        state.user = null;
+        state.loading = "failed";
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.isAuthenticated = false;
+        state.user = null;
       });
   },
 });
-export const { logout } = userSlice.actions;
+export const { clearError } = userSlice.actions;
 export default userSlice.reducer;

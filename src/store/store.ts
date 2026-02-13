@@ -3,13 +3,15 @@ import userReduser from "./slices/userSlice";
 import exhibitReduser from "./slices/exhibitSlice";
 import commentReduser from "./slices/commentSlice";
 
-export const store = configureStore({
-  reducer: {
-    user: userReduser,
-    exhibit: exhibitReduser,
-    comment: commentReduser,
-  },
-});
+export const makeStore = () =>
+  configureStore({
+    reducer: {
+      user: userReduser,
+      exhibit: exhibitReduser,
+      comment: commentReduser,
+    },
+  });
 
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export type AppStore = ReturnType<typeof makeStore>;
+export type RootState = ReturnType<AppStore["getState"]>;
+export type AppDispatch = AppStore["dispatch"];

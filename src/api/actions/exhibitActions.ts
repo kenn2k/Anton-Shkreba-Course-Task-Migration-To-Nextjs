@@ -1,6 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../instances/axiosInstance";
 
+const EXTERNAL_API_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
 export const createExhibit = createAsyncThunk(
   "exhibit/create",
   async (data: FormData) => {
@@ -22,7 +24,7 @@ export const deleteExhibit = createAsyncThunk(
 );
 
 export const getAllExhibits = async (page: number) => {
-  const response = await axiosInstance.get("/api/exhibits", {
+  const response = await axiosInstance.get(`${EXTERNAL_API_URL}/api/exhibits`, {
     params: { page },
   });
   return response.data;
