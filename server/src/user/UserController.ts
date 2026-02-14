@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import {
   Param,
   Body,
@@ -11,10 +10,9 @@ import {
 
 import { CreateUserDto, UpdateUserDto } from "./dto/UserDto";
 
-import path from "path";
-import { readFile, writeFile } from "fs/promises";
+import { AppDataSource } from "../db/app-data-source";
 
-const filePath = path.join(__dirname, "../../userRepository.json");
+import { User } from "../entity/user.entity";
 
 @JsonController()
 export class UserController {
@@ -24,77 +22,40 @@ export class UserController {
   }
 
   @Get("/users")
-  async getAll() {
-    const data = await readFile(filePath, "utf-8");
+  getAll() {
+    const userRepository = AppDataSource.getRepository(User);
 
-    if (!data) {
-      return [];
-    }
-    const users = JSON.parse(data);
+    const users = userRepository.find();
+
     return users;
   }
 
   @Post("/users")
-  async createUser(@Body() userDto: CreateUserDto) {
-    let users = [];
+  createUser(@Body() userDto: CreateUserDto) {
+    const userRepository = AppDataSource.getRepository(User);
 
-    const data = await readFile(filePath, "utf-8");
+    const user = userRepository.create(userDto);
 
-    users = data ? JSON.parse(data) : [];
+    userRepository.save(user);
 
-    const newUser = {
-      id: Math.random(),
-      ...userDto,
-    };
-
-    users.push(newUser);
-
-    await writeFile(filePath, JSON.stringify(users, null, 2), "utf-8");
-
-    return newUser;
+    return user;
   }
 
   @Patch("/users/:id")
-  async updateUser(@Param("id") id: number, @Body() userDto: UpdateUserDto) {
-    const userId = Number(id);
+  updateUser(@Param("id") id: number, @Body() userDto: UpdateUserDto) {
+    const userRepository = AppDataSource.getRepository(User);
 
-    const data = await readFile(filePath, "utf-8");
+    const users = userRepository.update(id, userDto);
 
-    const users = data ? JSON.parse(data) : [];
-
-    const usersIndex = users.findIndex(
-      (item: { id: number }) => item.id === userId
-    );
-
-    if (usersIndex === -1) {
-      throw new Error("User not found");
-    }
-
-    const updatedUser = {
-      ...users[usersIndex],
-      ...userDto,
-      id: userId,
-    };
-
-    users[usersIndex] = updatedUser;
-
-    await writeFile(filePath, JSON.stringify(users, null, 2), "utf-8");
-
-    return updatedUser;
+    return users;
   }
 
   @Delete("/users/:id")
-  async removeUser(@Param("id") id: number) {
-    const userId = Number(id);
+  removeUser(@Param("id") id: number) {
+    const userRepository = AppDataSource.getRepository(User);
 
-    const data = await readFile(filePath, "utf-8");
+    userRepository.delete(id);
 
-    const users = data ? JSON.parse(data) : [];
-
-    const filtered = users.filter((item: { id: number }) => item.id !== userId);
-
-    await writeFile(filePath, JSON.stringify(filtered, null, 2), "utf-8");
-
-    return { deletedId: userId };
+    return { message: "User  deleted" };
   }
 }
