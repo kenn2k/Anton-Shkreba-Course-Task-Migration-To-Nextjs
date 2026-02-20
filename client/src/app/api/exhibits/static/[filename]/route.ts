@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
+import path from "path";
 
 export async function GET(
   req: NextRequest,
@@ -7,9 +8,21 @@ export async function GET(
 ) {
   const { filename } = await params;
 
+  const safeFilename = path.basename(filename);
+
+  if (safeFilename !== filename) {
+    return NextResponse.json({ error: "Invalid path" }, { status: 400 });
+  }
+  const allowedExtensions = [".png", ".jpg", ".jpeg", ".pdf"];
+
+  const extension = path.extname(safeFilename).toLowerCase();
+
+  if (!allowedExtensions.includes(extension)) {
+    return NextResponse.json({ error: "Invalid file type" }, { status: 400 });
+  }
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/exhibits/static/${filename}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/exhibits/static/${safeFilename}`,
       { responseType: "arraybuffer" }
     );
 

@@ -30,10 +30,20 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-export const getCurrentUser = createAsyncThunk("user/me", async () => {
-  const response = await axiosInstance.get("/api/users/my-profile");
-  return response.data;
-});
+export const getCurrentUser = createAsyncThunk(
+  "user/me",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get("/api/users/my-profile");
+      return response.data;
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        return rejectWithValue("Unauthorized");
+      }
+      throw err;
+    }
+  }
+);
 
 export const logoutUser = createAsyncThunk("user/logout", async () => {
   await axiosInstance.post("/api/auth/logout");
